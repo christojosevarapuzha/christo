@@ -287,8 +287,6 @@
             cursor: pointer;
             font-weight: 800;
             color: #3b82f6;
-            text-decoration: underline;
-            text-decoration-style: wavy;
         }
 
         .dog-highlight:hover {
@@ -436,20 +434,39 @@
             </div>
             <!-- CONTACT CONTENT -->
             <div id="contact" class="content-panel text-left w-full max-w-2xl mx-auto px-6">
-                <div class="pt-8 border-t border-current flex flex-col items-center gap-8">
-                    <p class="text-center text-xl opacity-80">
-                        Interested in working together? Drop me a line.
-                    </p>
+                <div class="pt-8 border-t border-current flex flex-col gap-4">
+
+                    <!-- Gmail -->
                     <a href="mailto:christojose24@gmail.com"
-                        class="text-3xl md:text-5xl font-bold border-b-2 border-current hover:text-white dark:hover:text-white transition pb-2">
-                        christojose24@gmail.com
+                        class="w-full p-6 border border-current rounded-xl hover:bg-white hover:text-black transition-all duration-300 group flex justify-between items-center bg-transparent">
+                        <span class="text-xl md:text-2xl font-bold uppercase tracking-widest">Email</span>
+                        <span
+                            class="text-sm md:text-xl opacity-60 group-hover:opacity-100 transition-opacity">christojose24@gmail.com</span>
                     </a>
-                    <div class="flex gap-8 mt-4">
-                        <a href="https://www.linkedin.com/in/josechristoprofile/" target="_blank"
-                            class="uppercase tracking-widest font-bold hover:underline">LinkedIn</a>
-                        <a href="#" class="uppercase tracking-widest font-bold hover:underline">GitHub</a>
-                        <a href="#" class="uppercase tracking-widest font-bold hover:underline">Twitter</a>
+
+                    <!-- LinkedIn -->
+                    <a href="https://www.linkedin.com/in/josechristoprofile/" target="_blank"
+                        class="w-full p-6 border border-current rounded-xl hover:bg-[#0077b5] hover:text-white hover:border-[#0077b5] transition-all duration-300 group flex justify-between items-center bg-transparent">
+                        <span class="text-xl md:text-2xl font-bold uppercase tracking-widest">LinkedIn</span>
+                        <span class="text-sm md:text-xl opacity-60 group-hover:opacity-100 transition-opacity">Connect
+                            Professionally</span>
+                    </a>
+
+                    <!-- Instagram (Funny Lazy Interaction) -->
+                    <div onclick="toggleInstaLazy()"
+                        class="w-full p-6 border border-current rounded-xl hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white hover:border-transparent transition-all duration-300 cursor-pointer flex flex-col gap-2 bg-transparent">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="text-xl md:text-2xl font-bold uppercase tracking-widest">Instagram</span>
+                            <span class="text-sm md:text-xl opacity-60">Socials</span>
+                        </div>
+                        <div id="insta-msg"
+                            class="hidden mt-2 text-center font-medium text-lg leading-relaxed animate-bounce">
+                            <br>
+                            "I was too lazy to add a link here...<br>
+                            Just search for <b class="underline">jose_christo</b> manually." 😴
+                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -472,11 +489,12 @@
 
             <h2 class="text-3xl font-bold mb-6 font-display uppercase tracking-tighter text-center">About Me</h2>
             <p class="text-xl leading-relaxed font-medium text-center">
-                "Hey, thanks for visiting my site! I'm Christo, from Pala, a small town in Kerala.
-                By profession I'm a software developer. I live with my mother, sister, wife and a beautiful
+                "I'm Christo. I write code that <i>occasionally</i> works.
+                <br><br>
+                I'm from Pala, Kerala — a place where rubber trees outnumber people.
+                I live with my mom, sister, wife, and the <b>real</b> boss of the house... my
                 <span class="dog-highlight" onclick="toggleDog(event)">dog</span>."
             </p>
-            <p class="mt-4 text-sm opacity-50 italic text-center">(Click the highlighted word!)</p>
         </div>
     </div>
 
@@ -545,6 +563,11 @@
                     section.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 300);
             }
+        }
+
+        function toggleInstaLazy() {
+            const msg = document.getElementById('insta-msg');
+            msg.classList.toggle('hidden');
         }
     </script>
 </body>
