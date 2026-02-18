@@ -1,111 +1,552 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Christo Jose</title>
+    <title>CHRISTO JOSE | Software Developer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#E5C06A',
+                        black: '#0a0a0a',
+                        offwhite: '#F5F5F5'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    },
+                    animation: {
+                        marquee: 'marquee 20s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0a0a0a; color: white; scroll-behavior: smooth; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gradient-text { background: linear-gradient(to right, #fff, #666); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .bento-item { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
-        .bento-item:hover { transform: translateY(-5px); border-color: #3b82f6; background: rgba(255, 255, 255, 0.05); }
+        body {
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .text-giant {
+            font-size: clamp(4rem, 15vw, 12rem);
+            line-height: 0.9;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            background-color: white;
+            color: black;
+            border-radius: 9999px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Theme Toggle Pill State */
+        .pill-toggle {
+            width: 0.7em;
+            /* Circular */
+            height: 0.7em;
+            /* Circular */
+            position: relative;
+        }
+
+        .pill-toggle::after {
+            content: '';
+            width: 40%;
+            height: 40%;
+            background-color: black;
+            border-radius: 50%;
+            position: absolute;
+            transition: transform 0.3s ease;
+        }
+
+        .dark .pill-toggle::after {
+            background-color: #E5C06A;
+            /* Gold dot in dark mode */
+        }
+
+        /* Content Pill State (Expandable) */
+        .pill-expand {
+            width: 0.7em;
+            height: 0.7em;
+        }
+
+        .group:hover .pill-expand {
+            width: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            border-radius: 2rem;
+        }
+
+        .pill-content {
+            opacity: 0;
+            white-space: nowrap;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transform: translateY(10px);
+            transition: all 0.3s ease 0.1s;
+            display: none;
+        }
+
+        .group:hover .pill-content {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+
+        /* Marquee wrapper */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        /* Content Sections (Hidden by default) */
+        .content-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+            opacity: 0;
+        }
+
+        .content-panel.open {
+            max-height: 1000px;
+            /* Arbitrary large height */
+            opacity: 1;
+            padding-bottom: 4rem;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .light ::-webkit-scrollbar-thumb {
+            background: #ccc;
+        }
+
+        /* Creative Profile Reveal */
+        .pill-profile {
+            width: 0.7em;
+            height: 0.7em;
+            position: relative;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .pill-profile:hover {
+            width: 300px;
+            height: 300px;
+            border-radius: 20px;
+            transform: translateY(-50px) rotate(5deg);
+        }
+
+        .pill-profile::after {
+            content: '';
+            width: 100%;
+            height: 100%;
+            background-image: url('/images/my-profile.jpg');
+            /* Default image */
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pill-profile:hover::after {
+            opacity: 1;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: white;
+            color: black;
+            padding: 2rem;
+            border-radius: 2rem;
+            max-width: 90%;
+            width: 600px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .dark .modal-content {
+            background: #1a1a1a;
+            color: #E5C06A;
+            border: 1px solid #E5C06A;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Interactive 'C' */
+        .interactive-c {
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            transition: transform 0.3s ease, color 0.3s ease;
+            animation: pulse-glow 2s infinite ease-in-out;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .interactive-c:hover {
+            transform: scale(1.1) rotate(-5deg);
+            color: #E5C06A;
+            animation-play-state: paused;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(229, 192, 106, 0.5);
+            }
+
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 30px rgba(229, 192, 106, 0.9);
+            }
+        }
+
+        /* Profile Image in Modal */
+        .profile-modal-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1.5rem auto;
+            border: 4px solid #E5C06A;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: block;
+        }
+
+        /* Dog Text Highlight */
+        .dog-highlight {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 800;
+            color: #3b82f6;
+            text-decoration: underline;
+            text-decoration-style: wavy;
+        }
+
+        .dog-highlight:hover {
+            transform: scale(1.05);
+        }
+
+        /* Dog Image Reveal */
+        .dog-reveal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 300px;
+            height: 300px;
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            z-index: 60;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dog-reveal.active {
+            transform: translate(-50%, -50%) scale(1) rotate(3deg);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dog-reveal img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
     </style>
 </head>
-<body class="p-6 md:p-12">
 
-<nav class="max-w-6xl mx-auto flex justify-between items-center mb-12">
-    <div class="font-extrabold text-2xl tracking-tighter uppercase">CHRISTO <span class="text-blue-500">JOSE.</span></div>
-    <div class="flex gap-8 text-xs font-bold uppercase tracking-widest opacity-60">
-        <a href="#work" class="hover:opacity-100 transition">Experience</a>
-        <a href="#contact" class="hover:opacity-100 transition text-blue-500">Let's Talk</a>
+<body class="bg-black text-gold dark" id="body">
+
+    <!-- Loading Overlay (Optional, simple fade in) -->
+
+    <main class="min-h-screen flex flex-col items-center justify-center p-4">
+
+        <!-- HEADER / HERO -->
+        <header class="w-full text-center font-display font-black tracking-tighter">
+
+            <!-- TOP NAME -->
+            <div class="flex flex-col items-center">
+                <div class="text-giant flex items-center gap-[2vw]">
+                    <span class="interactive-c" onclick="openBioModal()">C</span>
+                    <span>HRIST</span>
+                    <!-- Theme Toggle 1 -->
+                    <div class="pill pill-toggle" onclick="toggleTheme()" aria-label="Toggle Theme"></div>
+                </div>
+
+                <!-- BOTTOM NAME -->
+                <div class="text-giant flex items-center gap-[2vw]">
+                    <span>J</span>
+                    <span>O</span>
+                    <span>SE</span>
+                </div>
+            </div>
+
+        </header>
+
+        <!-- NAVIGATION / CONTENT -->
+        <nav class="mt-16 md:mt-24 w-full max-w-5xl flex flex-col gap-8 text-center">
+
+            <!-- ABOUT LINK -->
+            <div class="group cursor-pointer" onclick="toggleSection('about')">
+                <div
+                    class="text-[clamp(3rem,8vw,6rem)] font-display font-black uppercase flex items-center justify-center gap-4 hover:tracking-widest transition-all duration-300">
+                    AB
+                    <span class="pill pill-expand h-[0.8em] w-[0.8em]">
+                        <span class="pill-content">Read Bio</span>
+                    </span>
+                    UT
+                </div>
+            </div>
+            <!-- ABOUT CONTENT -->
+            <div id="about" class="content-panel text-left w-full max-w-3xl mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 pt-8 border-t border-current">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 uppercase tracking-widest">Profile</h3>
+                        <p class="text-lg leading-relaxed opacity-80">
+                            I am a Backend Lead and Software Developer based in India.
+                            I specialize in building robust, scalable systems using Java Spring Boot.
+                            With 7+ years of experience, I turn complex requirements into elegant code.
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 uppercase tracking-widest">Hobbies</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span
+                                class="border border-current px-4 py-2 rounded-full text-sm font-bold uppercase hover:bg-current hover:text-black dark:hover:text-gold transition">Gaming</span>
+                            <span
+                                class="border border-current px-4 py-2 rounded-full text-sm font-bold uppercase hover:bg-current hover:text-black dark:hover:text-gold transition">Photography</span>
+                            <span
+                                class="border border-current px-4 py-2 rounded-full text-sm font-bold uppercase hover:bg-current hover:text-black dark:hover:text-gold transition">Travel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORK LINK -->
+            <div class="group cursor-pointer" onclick="toggleSection('work')">
+                <div
+                    class="text-[clamp(3rem,8vw,6rem)] font-display font-black uppercase flex items-center justify-center gap-4 hover:tracking-widest transition-all duration-300">
+                    W
+                    <span class="pill pill-expand h-[0.8em] w-[0.8em]">
+                        <span class="pill-content">View Projects</span>
+                    </span>
+                    RK
+                </div>
+            </div>
+            <!-- WORK CONTENT -->
+            <div id="work" class="content-panel text-left w-full max-w-4xl mx-auto px-6">
+                <div class="pt-8 border-t border-current flex flex-col items-center text-center">
+                    <div class="text-6xl mb-6">🚧</div>
+                    <h3 class="text-2xl font-bold mb-4 uppercase tracking-widest">Work In Progress</h3>
+                    <p class="text-xl leading-relaxed opacity-80 max-w-2xl mx-auto mb-8">
+                        "I was *going* to add my projects here, but honestly? I got too lazy.
+                        <br>
+                        For the professional, non-lazy version of my history, you should probably check my LinkedIn."
+                    </p>
+                    <a href="https://www.linkedin.com/in/josechristoprofile/" target="_blank"
+                        class="text-xl font-bold border-2 border-current px-8 py-3 rounded-full hover:bg-current hover:text-black dark:hover:text-gold transition uppercase tracking-widest">
+                        Stalk Me on LinkedIn
+                    </a>
+                </div>
+            </div>
+
+            <!-- CONTACT LINK -->
+            <div class="group cursor-pointer" onclick="toggleSection('contact')">
+                <div
+                    class="text-[clamp(3rem,8vw,6rem)] font-display font-black uppercase flex items-center justify-center gap-4 hover:tracking-widest transition-all duration-300">
+                    C
+                    <span class="pill pill-expand h-[0.8em] w-[0.8em]">
+                        <span class="pill-content">Say Hello</span>
+                    </span>
+                    NTACT
+                </div>
+            </div>
+            <!-- CONTACT CONTENT -->
+            <div id="contact" class="content-panel text-left w-full max-w-2xl mx-auto px-6">
+                <div class="pt-8 border-t border-current flex flex-col items-center gap-8">
+                    <p class="text-center text-xl opacity-80">
+                        Interested in working together? Drop me a line.
+                    </p>
+                    <a href="mailto:christojose24@gmail.com"
+                        class="text-3xl md:text-5xl font-bold border-b-2 border-current hover:text-white dark:hover:text-white transition pb-2">
+                        christojose24@gmail.com
+                    </a>
+                    <div class="flex gap-8 mt-4">
+                        <a href="https://www.linkedin.com/in/josechristoprofile/" target="_blank"
+                            class="uppercase tracking-widest font-bold hover:underline">LinkedIn</a>
+                        <a href="#" class="uppercase tracking-widest font-bold hover:underline">GitHub</a>
+                        <a href="#" class="uppercase tracking-widest font-bold hover:underline">Twitter</a>
+                    </div>
+                </div>
+            </div>
+
+        </nav>
+
+        <footer class="mt-24 mb-6 opacity-40 text-xs uppercase tracking-[0.2em] font-bold">
+            © 2026 Christo Jose
+        </footer>
+
+    </main>
+
+    <!-- Bio Modal -->
+    <div id="bioModal" class="modal" onclick="closeBioModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button onclick="closeBioModal()"
+                class="absolute top-4 right-4 text-2xl font-bold opacity-50 hover:opacity-100">&times;</button>
+
+            <!-- Profile Image Added Here -->
+            <img src="/images/my-profile.jpg" alt="Christo Jose" class="profile-modal-img">
+
+            <h2 class="text-3xl font-bold mb-6 font-display uppercase tracking-tighter text-center">About Me</h2>
+            <p class="text-xl leading-relaxed font-medium text-center">
+                "Hey, thanks for visiting my site! I'm Christo, from Pala, a small town in Kerala.
+                By profession I'm a software developer. I live with my mother, sister, wife and a beautiful
+                <span class="dog-highlight" onclick="toggleDog(event)">dog</span>."
+            </p>
+            <p class="mt-4 text-sm opacity-50 italic text-center">(Click the highlighted word!)</p>
+        </div>
     </div>
-</nav>
 
-<main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[180px]">
-
-    <div class="md:col-span-3 md:row-span-2 glass rounded-[2rem] p-10 flex flex-col justify-end relative bento-item">
-        <div class="absolute top-[-10%] right-[-10%] w-64 h-64 bg-blue-600 rounded-full blur-[120px] opacity-20"></div>
-        <div class="absolute top-6 left-10 text-[80px] font-black opacity-[0.03] select-none uppercase">Christo</div>
-
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-4 leading-none">
-            BUILDING <br> <span class="gradient-text">DIGITAL MAGIC.</span>
-        </h1>
-        <p class="text-lg opacity-50 max-w-md font-medium">Lead Solution Engineer At IBS Software</p>
+    <!-- Dog Image Reveal -->
+    <div id="dogPopup" class="dog-reveal" onclick="toggleDog(event)">
+        <img src="/images/dog.jpg" alt="My Beautiful Dog">
     </div>
 
-    <div class="md:col-span-1 md:row-span-2 glass rounded-[2rem] bento-item relative">
-        <img src="/images/my-profile.jpg"
-             alt="Jose Christo"
-             class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">
-    </div>
+    <script>
+        const body = document.getElementById('body');
 
-    <a href="https://www.linkedin.com/in/josechristoprofile/" target="_blank"
-       class="md:col-span-1 md:row-span-1 glass rounded-[2rem] p-8 flex flex-col justify-between bento-item group cursor-pointer border-blue-500/30">
-        <span class="text-xs uppercase opacity-40 font-bold tracking-widest">LinkedIn</span>
-        <div class="text-xl font-bold flex items-center justify-between">
-            Connect <span class="transform group-hover:translate-x-1 group-hover:-translate-y-1 transition text-blue-500">↗</span>
-        </div>
-    </a>
+        // --- Modal Logic ---
+        function openBioModal() {
+            document.getElementById('bioModal').classList.add('active');
+        }
 
-    <div class="md:col-span-2 md:row-span-1 glass rounded-[2rem] p-8 flex items-center justify-around bento-item">
-        <div class="text-center">
-            <div class="text-5xl font-black italic">7+</div>
-            <div class="text-[10px] uppercase opacity-40 font-bold tracking-[0.2em] mt-1">Years Experience</div>
-        </div>
-        <div class="w-[1px] h-12 bg-white/10"></div>
-        <div class="text-center">
-            <div class="text-5xl font-black italic text-blue-500">3+</div>
-            <div class="text-[10px] uppercase opacity-40 font-bold tracking-[0.2em] mt-1">Global Projects</div>
-        </div>
-    </div>
+        function closeBioModal(e) {
+            // Check if triggered by event (overlay click) or direct call (button)
+            if (!e || e.target.id === 'bioModal') {
+                document.getElementById('bioModal').classList.remove('active');
+                // Also close dog if open
+                document.getElementById('dogPopup').classList.remove('active');
+            }
+            // If direct call (button)
+            if (!e) {
+                document.getElementById('bioModal').classList.remove('active');
+                document.getElementById('dogPopup').classList.remove('active');
+            }
+        }
 
-    <a href="#contact" class="md:col-span-1 md:row-span-1 bg-white text-black rounded-[2rem] p-8 flex flex-col justify-between hover:bg-blue-600 hover:text-white transition duration-500 group bento-item">
-        <span class="text-xs uppercase font-bold tracking-widest">Status: Available</span>
-        <div class="text-xl font-bold italic">Hire Me —</div>
-    </a>
+        function toggleDog(e) {
+            e.stopPropagation();
+            const dogPopup = document.getElementById('dogPopup');
+            dogPopup.classList.toggle('active');
+        }
 
-    <div id="work" class="md:col-span-4 grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div class="glass rounded-[2rem] h-32 flex items-center justify-center p-8 bento-item">
-            <img src="/images/wipro.png" alt="Wipro" class="max-w-full max-h-full object-contain opacity-40 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="glass rounded-[2rem] h-32 flex items-center justify-center p-8 bento-item">
-            <img src="/images/qatarairways.jpeg" alt="Qatar Airways" class="max-w-full max-h-full object-contain opacity-40 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="glass rounded-[2rem] h-32 flex items-center justify-center p-8 bento-item">
-            <img src="/images/roche.png" alt="Roche" class="max-w-full max-h-full object-contain opacity-40 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="glass rounded-[2rem] h-32 flex items-center justify-center p-8 bento-item">
-            <img src="/images/ibs.png" alt="IBS Software" class="max-w-full max-h-full object-contain opacity-40 hover:opacity-100 transition-opacity">
-        </div>
-        <div class="glass rounded-[2rem] h-32 flex items-center justify-center p-8 bento-item">
-            <img src="/images/expedia.jpeg" alt="Expedia" class="max-w-full max-h-full object-contain opacity-40 hover:opacity-100 transition-opacity">
-        </div>
-    </div>
-</main>
+        function toggleTheme() {
+            body.classList.toggle('dark');
 
-<section id="contact" class="max-w-6xl mx-auto mt-24 px-10 py-24 glass rounded-[3rem] text-center relative overflow-hidden">
-    <div class="absolute inset-0 bg-blue-600/5 blur-3xl rounded-full"></div>
-    <h2 class="text-5xl md:text-8xl font-black tracking-tighter mb-6 leading-none uppercase">
-        Wanna <span class="text-blue-500 italic">Conect?</span>
-    </h2>
+            // Invert colors manually if needed for specific elements, 
+            // but Tailwind 'dark' class applied to body handles most via styling variables
+            if (body.classList.contains('dark')) {
+                body.classList.remove('bg-gold', 'text-black');
+                body.classList.add('bg-black', 'text-gold');
+            } else {
+                body.classList.remove('bg-black', 'text-gold');
+                body.classList.add('bg-gold', 'text-black');
+            }
+        }
 
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            const allSections = document.querySelectorAll('.content-panel');
 
-    <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
-        <a href="mailto:christojose24@gmail.com" class="w-full md:w-auto px-12 py-5 bg-white text-black font-bold rounded-full hover:bg-blue-600 hover:text-white transition-all transform hover:scale-105 active:scale-95">
-            Send an Email
-        </a>
-        <a href="https://www.linkedin.com/in/josechristoprofile/" target="_blank" class="w-full md:w-auto px-12 py-5 glass border-white/20 font-bold rounded-full hover:border-blue-500 transition-all transform hover:scale-105 active:scale-95">
-            LinkedIn Message
-        </a>
-    </div>
-</section>
+            // Close others
+            allSections.forEach(s => {
+                if (s.id !== id) s.classList.remove('open');
+            });
 
-<footer class="max-w-6xl mx-auto mt-16 pb-12 opacity-20 text-[10px] flex justify-between uppercase tracking-[0.3em]">
-    <span>&copy; 2026 JOSE CHRISTO</span>
-    <span>Architected with Spring Boot</span>
-</footer>
+            // Toggle current
+            section.classList.toggle('open');
 
+            // Optional: Scroll to section if opening
+            if (section.classList.contains('open')) {
+                setTimeout(() => {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        }
+    </script>
 </body>
+
+</html>
