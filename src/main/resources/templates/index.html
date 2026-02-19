@@ -354,6 +354,93 @@
 
         </header>
 
+        <style>
+            /* Bike Animation */
+            .bike-container {
+                position: absolute;
+                top: -60px;
+                /* Adjust based on bike size */
+                left: 0;
+                width: 100%;
+                height: 100px;
+                pointer-events: none;
+                z-index: 20;
+                overflow: visible;
+            }
+
+            .bike-icon {
+                width: 80px;
+                /* Adjust size */
+                height: auto;
+                position: absolute;
+                animation: ride-loop 8s linear infinite;
+                filter: drop-shadow(0 0 5px rgba(229, 192, 106, 0.5));
+            }
+
+            @keyframes ride-loop {
+                0% {
+                    left: -10%;
+                    transform: rotate(0deg) translateY(0);
+                }
+
+                10% {
+                    left: 10%;
+                    transform: rotate(-5deg) translateY(-5px);
+                }
+
+                /* Jump on J */
+                20% {
+                    left: 20%;
+                    transform: rotate(5deg) translateY(0);
+                }
+
+                30% {
+                    left: 35%;
+                    transform: rotate(-10deg) translateY(-15px);
+                }
+
+                /* Big Jump */
+                40% {
+                    left: 50%;
+                    transform: rotate(5deg) translateY(0);
+                }
+
+                /* Land on O */
+                50% {
+                    left: 60%;
+                    transform: rotate(-5deg) translateY(-5px);
+                }
+
+                60% {
+                    left: 75%;
+                    transform: rotate(5deg) translateY(0);
+                }
+
+                /* Land on S */
+                70% {
+                    left: 85%;
+                    transform: rotate(-15deg) translateY(-20px);
+                }
+
+                /* Jump off E */
+                80% {
+                    left: 95%;
+                    transform: rotate(10deg) translateY(10px);
+                    opacity: 1;
+                }
+
+                90% {
+                    left: 110%;
+                    opacity: 0;
+                }
+
+                100% {
+                    left: -10%;
+                    opacity: 0;
+                }
+            }
+        </style>
+
         <!-- NAVIGATION / CONTENT -->
         <nav class="mt-16 md:mt-24 w-full max-w-5xl flex flex-col gap-8 text-center">
 
@@ -374,9 +461,10 @@
                     <div>
                         <h3 class="text-xl font-bold mb-4 uppercase tracking-widest">Profile</h3>
                         <p class="text-lg leading-relaxed opacity-80">
-                            I am a Backend Lead and Software Developer based in India.
-                            I specialize in building robust, scalable systems using Java Spring Boot.
-                            With 7+ years of experience, I turn complex requirements into elegant code.
+                            Backend Lead & Architect with 7+ years of experience engineering mission-critical, scalable
+                            systems.
+                            I specialize in Java & Spring Boot to drive technical strategy and deliver high-performance
+                            solutions for major enterprise clients across Healthcare, Aviation, and OTA sectors.
                         </p>
                     </div>
                     <div>
@@ -392,6 +480,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- WORK LINK -->
             <div class="group cursor-pointer" onclick="toggleSection('work')">
@@ -462,7 +551,7 @@
                         <div id="insta-msg"
                             class="hidden mt-2 text-center font-medium text-lg leading-relaxed animate-bounce">
                             <br>
-                            "I was too lazy to add a link here...<br>
+                            "Hmm...Again I was too lazy to add a link here...<br>
                             Just search for <b class="underline">jose_christo</b> manually." 😴
                         </div>
                     </div>
@@ -472,9 +561,31 @@
 
         </nav>
 
-        <footer class="mt-24 mb-6 opacity-40 text-xs uppercase tracking-[0.2em] font-bold">
-            © 2026 Christo Jose
+        <footer
+            class="mt-24 mb-6 flex flex-col items-center gap-4 opacity-40 text-xs uppercase tracking-[0.2em] font-bold">
+            <div>© 2026 Christo Jose</div>
+
+            <!-- Visitor Counter -->
+            <div class="flex items-center gap-2 px-4 py-2 border border-current rounded-full text-[10px] tracking-widest opacity-80 hover:opacity-100 transition-opacity"
+                title="Total Visitors">
+                <span class="text-lg">👀</span>
+                <span class="font-mono text-sm" th:text="${visitorCount} ?: '0'">0</span>
+                <span id="visitor-label">Visitors</span>
+            </div>
         </footer>
+
+        <script>
+            const visitorLabels = [
+                "Stalkers",
+                "Future Besties",
+                "Rubber Tree Fans",
+                "People Avoiding Work",
+                "Lost Souls",
+                "Curious Cats",
+                "Witnesses"
+            ];
+            document.getElementById('visitor-label').innerText = visitorLabels[Math.floor(Math.random() * visitorLabels.length)];
+        </script>
 
     </main>
 
@@ -492,8 +603,8 @@
                 "I'm Christo. I write code that <i>occasionally</i> works.
                 <br><br>
                 I'm from Pala, Kerala — a place where rubber trees outnumber people.
-                I live with my mom, sister, wife, and the <b>real</b> boss of the house... my
-                <span class="dog-highlight" onclick="toggleDog(event)">dog</span>."
+                I live with my mom, sister, wife, and my
+                <span class="dog-highlight" onclick="toggleDog(event)">dog</span>.
             </p>
         </div>
     </div>
@@ -502,6 +613,8 @@
     <div id="dogPopup" class="dog-reveal" onclick="toggleDog(event)">
         <img src="/images/dog.jpg" alt="My Beautiful Dog">
     </div>
+
+
 
     <script>
         const body = document.getElementById('body');
@@ -565,11 +678,14 @@
             }
         }
 
+
+
         function toggleInstaLazy() {
             const msg = document.getElementById('insta-msg');
             msg.classList.toggle('hidden');
         }
     </script>
+    <script src="/js/antigravity.js"></script>
 </body>
 
 </html>
