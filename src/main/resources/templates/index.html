@@ -576,7 +576,39 @@
                 <span class="font-mono text-sm" th:text="${visitorCount} ?: '0'">0</span>
                 <span id="visitor-label">Visitors</span>
             </div>
+
+            <!-- Leave a Trace Button -->
+            <button onclick="openGuestbookModal()"
+                class="mt-4 px-6 py-2 border-2 border-current rounded-full font-bold uppercase tracking-widest text-sm hover:bg-current hover:text-black dark:hover:text-gold transition-all">
+                Leave a Trace ✍️
+            </button>
+
+            <!-- Admin Login Button -->
+            <button onclick="openAdminModal()" title="Admin Access"
+                class="mt-2 text-xl opacity-20 hover:opacity-100 transition-opacity p-2">
+                🔒
+            </button>
         </footer>
+
+        <!-- Guestbook Marquee -->
+        <div class="w-full bg-current text-white dark:text-black py-3 mt-8 overflow-hidden marquee-container">
+            <div class="inline-block whitespace-nowrap animate-marquee font-bold tracking-widest uppercase text-sm">
+                <!-- If empty, show default -->
+                <span th:if="${guestbookMessages == null or #lists.isEmpty(guestbookMessages)}" class="mx-8">
+                    * No traces left yet... be the first! *
+                </span>
+
+                <!-- Loop through messages -->
+                <span th:each="msg : ${guestbookMessages}" class="mx-8">
+                    * "<span th:text="${msg}"></span>" *
+                </span>
+
+                <!-- Duplicate for seamless loop if needed, thymeleaf logic -->
+                <span th:each="msg : ${guestbookMessages}" class="mx-8" aria-hidden="true">
+                    * "<span th:text="${msg}"></span>" *
+                </span>
+            </div>
+        </div>
 
         <script>
             const visitorLabels = [
@@ -618,6 +650,46 @@
         <img src="/images/dog.jpg" alt="My Beautiful Dog">
     </div>
 
+    <!-- Guestbook Modal -->
+    <div id="guestbookModal" class="modal" onclick="closeGuestbookModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button onclick="closeGuestbookModal()"
+                class="absolute top-4 right-4 text-2xl font-bold opacity-50 hover:opacity-100">&times;</button>
+            <h2 class="text-3xl font-bold mb-4 font-display uppercase tracking-tighter text-center">Leave a Trace</h2>
+            <p class="text-center mb-6 opacity-80 text-sm">Drop a short message anonymously (Max 100 chars).</p>
+
+            <form id="guestbookForm" onsubmit="submitGuestbook(event)">
+                <input type="text" id="guestbookMessage" maxlength="100" required
+                    placeholder="E.g., 'Hello from Tokyo!' or 'Cool website 😎'"
+                    class="w-full p-4 rounded-xl border-2 border-current bg-transparent mb-4 focus:outline-none focus:ring-2 focus:ring-current text-lg">
+                <p id="guestbookFeedback" class="text-center text-sm font-bold hidden mb-4"></p>
+                <button type="submit" id="guestbookSubmit"
+                    class="w-full py-4 bg-black text-white dark:bg-gold dark:text-black rounded-xl font-bold uppercase tracking-widest hover:opacity-80 transition-opacity">
+                    Leave It
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminModal" class="modal" onclick="closeAdminModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button onclick="closeAdminModal()"
+                class="absolute top-4 right-4 text-2xl font-bold opacity-50 hover:opacity-100">&times;</button>
+            <h2 class="text-3xl font-bold mb-4 font-display uppercase tracking-tighter text-center">Admin Access</h2>
+            <p class="text-center mb-6 opacity-80 text-sm">Enter the secret password to view all traces.</p>
+
+            <form id="adminForm" onsubmit="submitAdmin(event)">
+                <input type="password" id="adminPassword" required placeholder="Password"
+                    class="w-full p-4 rounded-xl border-2 border-current bg-transparent mb-4 focus:outline-none focus:ring-2 focus:ring-current text-lg">
+                <button type="submit"
+                    class="w-full py-4 bg-black text-white dark:bg-gold dark:text-black rounded-xl font-bold uppercase tracking-widest hover:opacity-80 transition-opacity">
+                    View Traces
+                </button>
+            </form>
+        </div>
+    </div>
+
 
 
     <script>
@@ -639,6 +711,86 @@
             if (!e) {
                 document.getElementById('bioModal').classList.remove('active');
                 document.getElementById('dogPopup').classList.remove('active');
+            }
+        }
+
+        function openGuestbookModal() {
+            document.getElementById('guestbookModal').classList.add('active');
+            document.getElementById('guestbookFeedback').classList.add('hidden');
+            document.getElementById('guestbookMessage').value = '';
+        }
+
+        function closeGuestbookModal(e) {
+            if (!e || e.target.id === 'guestbookModal') {
+                document.getElementById('guestbookModal').classList.remove('active');
+            }
+            if (!e) {
+                document.getElementById('guestbookModal').classList.remove('active');
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.add('active');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function closeAdminModal(e) {
+            if (!e || e.target.id === 'adminModal') {
+                document.getElementById('adminModal').classList.remove('active');
+            }
+            if (!e) {
+                document.getElementById('adminModal').classList.remove('active');
+            }
+        }
+
+        function submitAdmin(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            if (password) {
+                window.location.href = '/admin/guestbook?secret=' + encodeURIComponent(password);
+            }
+        }
+
+        async function submitGuestbook(e) {
+            e.preventDefault();
+            const messageInput = document.getElementById('guestbookMessage');
+            const submitBtn = document.getElementById('guestbookSubmit');
+            const feedback = document.getElementById('guestbookFeedback');
+            const message = messageInput.value.trim();
+
+            if (!message) return;
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Leaving Trace...';
+
+            try {
+                const response = await fetch('/api/guestbook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (response.ok) {
+                    feedback.innerText = "Trace left successfully! Refreshing...";
+                    feedback.classList.remove('hidden', 'text-red-500');
+                    feedback.classList.add('text-green-500');
+
+                    // Reload page after a short delay to see the updated marquee
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error('Failed to save message');
+                }
+            } catch (error) {
+                console.error(error);
+                feedback.innerText = "Oops, something went wrong. Try again later.";
+                feedback.classList.remove('hidden', 'text-green-500');
+                feedback.classList.add('text-red-500');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Leave It';
             }
         }
 

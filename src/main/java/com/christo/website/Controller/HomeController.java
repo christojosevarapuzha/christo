@@ -4,58 +4,71 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.*;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import com.christo.website.Service.VisitorService;
+import com.christo.website.Service.GuestbookService;
 
 @Controller
 public class HomeController {
 
-    private static final String VISITOR_FILE_PATH = "visitor_count.txt";
+    private final VisitorService visitorService;
+    private final GuestbookService guestbookService;
+
+    @Autowired
+    public HomeController(VisitorService visitorService, GuestbookService guestbookService) {
+        this.visitorService = visitorService;
+        this.guestbookService = guestbookService;
+    }
 
     @GetMapping("/")
     public String home(Model model, HttpServletRequest request) {
         System.out.println("Request received from: " + request.getRequestURI() + " | User-Agent: "
                 + request.getHeader("User-Agent"));
-        int count = 0;
-        try {
-            File file = new File(VISITOR_FILE_PATH);
-            if (!file.exists()) {
-                file.createNewFile();
-                writeFile(file, "0");
-            }
 
-            // Read current count
-            String content = readFile(file);
-            count = Integer.parseInt(content.trim());
+        int visitorCount = visitorService.incrementAndGetVisitorCount();
+        List<String> guestbookMessages = guestbookService.getRecentMessages(10);
 
-            // Increment count
-            count++;
-
-            // Write new count
-            writeFile(file, String.valueOf(count));
-
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-            // Fallback if file error
-        }
-
-        model.addAttribute("visitorCount", count);
+        model.addAttribute("visitorCount", visitorCount);
+        model.addAttribute("guestbookMessages", guestbookMessages);
         return "index";
     }
 
-    private String readFile(File file) throws IOException {
-        StringBuilder content = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content.append(line);
-            }
+    @GetMapping("/admin/guestbook")
+    public String adminGuestbook(
+            @org.springframework.web.bind.annotation.RequestParam(value = "secret", required = false) String secret,
+            Model model) {
+        if (!"123".equals(secret)) {
+            // Unauthorized / Forbidden
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "Access Denied");
         }
-        return content.toString();
+
+        List<String> allMessages = guestbookService.getAllMessages();
+        model.addAttribute("messages", allMessages);
+        return "admin_guestbook";
     }
 
-    private void writeFile(File file, String content) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(content);
+    @PostMapping("/api/guestbook")
+    @ResponseBody
+    public ResponseEntity<String> addGuestbookMessage(@RequestBody Map<String, String> payload) {
+        String message = payload.get("message");
+        boolean success = guestbookService.addMessage(message);
+
+        if (success) {
+            return ResponseEntity.ok("Message added");
+        } else {
+            if (message == null || message.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Message cannot be empty");
+            }
+            return ResponseEntity.internalServerError().body("Error saving message");
         }
     }
 }
