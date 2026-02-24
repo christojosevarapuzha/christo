@@ -16,7 +16,8 @@ public class GuestbookService {
             File guestbookFile = new File(GUESTBOOK_FILE_PATH);
             if (!guestbookFile.exists()) {
                 guestbookFile.createNewFile();
-                return messages;
+                // Copy initial data from classpath if available
+                copyFromClasspath(guestbookFile);
             }
             messages = readLastLines(guestbookFile, limit);
         } catch (IOException e) {
@@ -25,10 +26,30 @@ public class GuestbookService {
         return messages;
     }
 
+    private void copyFromClasspath(File targetFile) {
+        try (InputStream is = getClass().getResourceAsStream("/" + GUESTBOOK_FILE_PATH)) {
+            if (is != null) {
+                try (OutputStream os = new FileOutputStream(targetFile)) {
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = is.read(buffer)) != -1) {
+                        os.write(buffer, 0, bytesRead);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<String> getAllMessages() {
         List<String> allMessages = new ArrayList<>();
         try {
             File guestbookFile = new File(GUESTBOOK_FILE_PATH);
+            if (!guestbookFile.exists()) {
+                guestbookFile.createNewFile();
+                copyFromClasspath(guestbookFile);
+            }
             if (guestbookFile.exists()) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(guestbookFile))) {
                     String line;
