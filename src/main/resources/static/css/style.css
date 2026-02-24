@@ -1,0 +1,373 @@
+body {
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .text-giant {
+            font-size: clamp(4rem, 15vw, 12rem);
+            line-height: 0.9;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            background-color: white;
+            color: black;
+            border-radius: 9999px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Theme Toggle Pill State */
+        .pill-toggle {
+            width: 0.7em;
+            /* Circular */
+            height: 0.7em;
+            /* Circular */
+            position: relative;
+        }
+
+        .pill-toggle::after {
+            content: '';
+            width: 40%;
+            height: 40%;
+            background-color: black;
+            border-radius: 50%;
+            position: absolute;
+            transition: transform 0.3s ease;
+        }
+
+        .dark .pill-toggle::after {
+            background-color: #E5C06A;
+            /* Gold dot in dark mode */
+        }
+
+        /* Content Pill State (Expandable) */
+        .pill-expand {
+            width: 0.7em;
+            height: 0.7em;
+        }
+
+        .group:hover .pill-expand {
+            width: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            border-radius: 2rem;
+        }
+
+        .pill-content {
+            opacity: 0;
+            white-space: nowrap;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transform: translateY(10px);
+            transition: all 0.3s ease 0.1s;
+            display: none;
+        }
+
+        .group:hover .pill-content {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+
+        /* Marquee wrapper */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        /* Content Sections (Hidden by default) */
+        .content-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+            opacity: 0;
+        }
+
+        .content-panel.open {
+            max-height: 1000px;
+            /* Arbitrary large height */
+            opacity: 1;
+            padding-bottom: 4rem;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .light ::-webkit-scrollbar-thumb {
+            background: #ccc;
+        }
+
+        /* Creative Profile Reveal */
+        .pill-profile {
+            width: 0.7em;
+            height: 0.7em;
+            position: relative;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .pill-profile:hover {
+            width: 300px;
+            height: 300px;
+            border-radius: 20px;
+            transform: translateY(-50px) rotate(5deg);
+        }
+
+        .pill-profile::after {
+            content: '';
+            width: 100%;
+            height: 100%;
+            background-image: url('/images/my-profile.jpg');
+            /* Default image */
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pill-profile:hover::after {
+            opacity: 1;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: white;
+            color: black;
+            padding: 2rem;
+            border-radius: 2rem;
+            max-width: 90%;
+            width: 600px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .dark .modal-content {
+            background: #1a1a1a;
+            color: #E5C06A;
+            border: 1px solid #E5C06A;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Interactive 'C' */
+        .interactive-c {
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            transition: transform 0.3s ease, color 0.3s ease;
+            animation: pulse-glow 2s infinite ease-in-out;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .interactive-c:hover {
+            transform: scale(1.1) rotate(-5deg);
+            color: #E5C06A;
+            animation-play-state: paused;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(229, 192, 106, 0.5);
+            }
+
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 30px rgba(229, 192, 106, 0.9);
+            }
+        }
+
+        /* Profile Image in Modal */
+        .profile-modal-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1.5rem auto;
+            border: 4px solid #E5C06A;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: block;
+        }
+
+        /* Dog Text Highlight */
+        .dog-highlight {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 800;
+            color: #3b82f6;
+        }
+
+        .dog-highlight:hover {
+            transform: scale(1.05);
+        }
+
+        /* Dog Image Reveal */
+        .dog-reveal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 300px;
+            height: 300px;
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            z-index: 60;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dog-reveal.active {
+            transform: translate(-50%, -50%) scale(1) rotate(3deg);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dog-reveal img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+    
+
+            /* Bike Animation */
+            .bike-container {
+                position: absolute;
+                top: -60px;
+                /* Adjust based on bike size */
+                left: 0;
+                width: 100%;
+                height: 100px;
+                pointer-events: none;
+                z-index: 20;
+                overflow: visible;
+            }
+
+            .bike-icon {
+                width: 80px;
+                /* Adjust size */
+                height: auto;
+                position: absolute;
+                animation: ride-loop 8s linear infinite;
+                filter: drop-shadow(0 0 5px rgba(229, 192, 106, 0.5));
+            }
+
+            @keyframes ride-loop {
+                0% {
+                    left: -10%;
+                    transform: rotate(0deg) translateY(0);
+                }
+
+                10% {
+                    left: 10%;
+                    transform: rotate(-5deg) translateY(-5px);
+                }
+
+                /* Jump on J */
+                20% {
+                    left: 20%;
+                    transform: rotate(5deg) translateY(0);
+                }
+
+                30% {
+                    left: 35%;
+                    transform: rotate(-10deg) translateY(-15px);
+                }
+
+                /* Big Jump */
+                40% {
+                    left: 50%;
+                    transform: rotate(5deg) translateY(0);
+                }
+
+                /* Land on O */
+                50% {
+                    left: 60%;
+                    transform: rotate(-5deg) translateY(-5px);
+                }
+
+                60% {
+                    left: 75%;
+                    transform: rotate(5deg) translateY(0);
+                }
+
+                /* Land on S */
+                70% {
+                    left: 85%;
+                    transform: rotate(-15deg) translateY(-20px);
+                }
+
+                /* Jump off E */
+                80% {
+                    left: 95%;
+                    transform: rotate(10deg) translateY(10px);
+                    opacity: 1;
+                }
+
+                90% {
+                    left: 110%;
+                    opacity: 0;
+                }
+
+                100% {
+                    left: -10%;
+                    opacity: 0;
+                }
+            }

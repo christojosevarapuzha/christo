@@ -12,6 +12,9 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon.png">
     <link rel="shortcut icon" href="/images/favicon.png">
 
+    <!-- Matter.js Physics Engine for "Destroy Site" easter egg -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -39,295 +42,8 @@
             }
         }
     </script>
-    <style>
-        body {
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
 
-        .text-giant {
-            font-size: clamp(4rem, 15vw, 12rem);
-            line-height: 0.9;
-        }
-
-        .pill {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            vertical-align: middle;
-            background-color: white;
-            color: black;
-            border-radius: 9999px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        /* Theme Toggle Pill State */
-        .pill-toggle {
-            width: 0.7em;
-            /* Circular */
-            height: 0.7em;
-            /* Circular */
-            position: relative;
-        }
-
-        .pill-toggle::after {
-            content: '';
-            width: 40%;
-            height: 40%;
-            background-color: black;
-            border-radius: 50%;
-            position: absolute;
-            transition: transform 0.3s ease;
-        }
-
-        .dark .pill-toggle::after {
-            background-color: #E5C06A;
-            /* Gold dot in dark mode */
-        }
-
-        /* Content Pill State (Expandable) */
-        .pill-expand {
-            width: 0.7em;
-            height: 0.7em;
-        }
-
-        .group:hover .pill-expand {
-            width: auto;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-            border-radius: 2rem;
-        }
-
-        .pill-content {
-            opacity: 0;
-            white-space: nowrap;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            transform: translateY(10px);
-            transition: all 0.3s ease 0.1s;
-            display: none;
-        }
-
-        .group:hover .pill-content {
-            opacity: 1;
-            transform: translateY(0);
-            display: block;
-        }
-
-        /* Marquee wrapper */
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-        }
-
-        /* Content Sections (Hidden by default) */
-        .content-panel {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
-            opacity: 0;
-        }
-
-        .content-panel.open {
-            max-height: 1000px;
-            /* Arbitrary large height */
-            opacity: 1;
-            padding-bottom: 4rem;
-        }
-
-        /* Hide scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
-
-        .light ::-webkit-scrollbar-thumb {
-            background: #ccc;
-        }
-
-        /* Creative Profile Reveal */
-        .pill-profile {
-            width: 0.7em;
-            height: 0.7em;
-            position: relative;
-            background-color: white;
-            border-radius: 50%;
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-            z-index: 10;
-        }
-
-        .pill-profile:hover {
-            width: 300px;
-            height: 300px;
-            border-radius: 20px;
-            transform: translateY(-50px) rotate(5deg);
-        }
-
-        .pill-profile::after {
-            content: '';
-            width: 100%;
-            height: 100%;
-            background-image: url('/images/my-profile.jpg');
-            /* Default image */
-            background-size: cover;
-            background-position: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .pill-profile:hover::after {
-            opacity: 1;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: white;
-            color: black;
-            padding: 2rem;
-            border-radius: 2rem;
-            max-width: 90%;
-            width: 600px;
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .dark .modal-content {
-            background: #1a1a1a;
-            color: #E5C06A;
-            border: 1px solid #E5C06A;
-        }
-
-        .modal.active .modal-content {
-            transform: scale(1);
-        }
-
-        /* Interactive 'C' */
-        .interactive-c {
-            cursor: pointer;
-            position: relative;
-            display: inline-block;
-            transition: transform 0.3s ease, color 0.3s ease;
-            animation: pulse-glow 2s infinite ease-in-out;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .interactive-c:hover {
-            transform: scale(1.1) rotate(-5deg);
-            color: #E5C06A;
-            animation-play-state: paused;
-        }
-
-        @keyframes pulse-glow {
-
-            0%,
-            100% {
-                transform: scale(1);
-                text-shadow: 0 0 10px rgba(229, 192, 106, 0.5);
-            }
-
-            50% {
-                transform: scale(1.05);
-                text-shadow: 0 0 30px rgba(229, 192, 106, 0.9);
-            }
-        }
-
-        /* Profile Image in Modal */
-        .profile-modal-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 1.5rem auto;
-            border: 4px solid #E5C06A;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            display: block;
-        }
-
-        /* Dog Text Highlight */
-        .dog-highlight {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            font-weight: 800;
-            color: #3b82f6;
-        }
-
-        .dog-highlight:hover {
-            transform: scale(1.05);
-        }
-
-        /* Dog Image Reveal */
-        .dog-reveal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 300px;
-            height: 300px;
-            background: white;
-            padding: 10px;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            z-index: 60;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .dog-reveal.active {
-            transform: translate(-50%, -50%) scale(1) rotate(3deg);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .dog-reveal img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body class="bg-black text-gold dark" id="body">
@@ -358,92 +74,7 @@
 
         </header>
 
-        <style>
-            /* Bike Animation */
-            .bike-container {
-                position: absolute;
-                top: -60px;
-                /* Adjust based on bike size */
-                left: 0;
-                width: 100%;
-                height: 100px;
-                pointer-events: none;
-                z-index: 20;
-                overflow: visible;
-            }
 
-            .bike-icon {
-                width: 80px;
-                /* Adjust size */
-                height: auto;
-                position: absolute;
-                animation: ride-loop 8s linear infinite;
-                filter: drop-shadow(0 0 5px rgba(229, 192, 106, 0.5));
-            }
-
-            @keyframes ride-loop {
-                0% {
-                    left: -10%;
-                    transform: rotate(0deg) translateY(0);
-                }
-
-                10% {
-                    left: 10%;
-                    transform: rotate(-5deg) translateY(-5px);
-                }
-
-                /* Jump on J */
-                20% {
-                    left: 20%;
-                    transform: rotate(5deg) translateY(0);
-                }
-
-                30% {
-                    left: 35%;
-                    transform: rotate(-10deg) translateY(-15px);
-                }
-
-                /* Big Jump */
-                40% {
-                    left: 50%;
-                    transform: rotate(5deg) translateY(0);
-                }
-
-                /* Land on O */
-                50% {
-                    left: 60%;
-                    transform: rotate(-5deg) translateY(-5px);
-                }
-
-                60% {
-                    left: 75%;
-                    transform: rotate(5deg) translateY(0);
-                }
-
-                /* Land on S */
-                70% {
-                    left: 85%;
-                    transform: rotate(-15deg) translateY(-20px);
-                }
-
-                /* Jump off E */
-                80% {
-                    left: 95%;
-                    transform: rotate(10deg) translateY(10px);
-                    opacity: 1;
-                }
-
-                90% {
-                    left: 110%;
-                    opacity: 0;
-                }
-
-                100% {
-                    left: -10%;
-                    opacity: 0;
-                }
-            }
-        </style>
 
         <!-- NAVIGATION / CONTENT -->
         <nav class="mt-16 md:mt-24 w-full max-w-5xl flex flex-col gap-8 text-center">
@@ -561,13 +192,22 @@
                     </div>
 
                 </div>
+
+            </div>
             </div>
 
         </nav>
 
         <footer
             class="mt-24 mb-6 flex flex-col items-center gap-4 opacity-40 text-xs uppercase tracking-[0.2em] font-bold">
-            <div>© 2026 Christo Jose</div>
+
+            <!-- Leave a Trace Button -->
+            <button onclick="openGuestbookModal()"
+                class="mb-6 px-6 py-2 border-2 border-current rounded-full font-bold uppercase tracking-widest text-sm hover:bg-current hover:text-black dark:hover:text-gold transition-all">
+                Leave a Trace ✍️
+            </button>
+
+            <div class="mb-4">© 2026 Christo Jose</div>
 
             <!-- Visitor Counter -->
             <div class="flex items-center gap-2 px-4 py-2 border border-current rounded-full text-[10px] tracking-widest opacity-80 hover:opacity-100 transition-opacity"
@@ -577,15 +217,15 @@
                 <span id="visitor-label">Visitors</span>
             </div>
 
-            <!-- Leave a Trace Button -->
-            <button onclick="openGuestbookModal()"
-                class="mt-4 px-6 py-2 border-2 border-current rounded-full font-bold uppercase tracking-widest text-sm hover:bg-current hover:text-black dark:hover:text-gold transition-all">
-                Leave a Trace ✍️
+            <!-- DO NOT CLICK (Destroy Site Physics) -->
+            <button onclick="destroySite()"
+                class="mt-8 px-4 py-1 bg-red-600 text-white font-black text-xs uppercase tracking-widest rounded transition-transform hover:scale-110 shadow-[0_0_20px_rgba(220,38,38,0.8)] animate-pulse">
+                DO NOT CLICK
             </button>
 
             <!-- Admin Login Button -->
             <button onclick="openAdminModal()" title="Admin Access"
-                class="mt-2 text-xl opacity-20 hover:opacity-100 transition-opacity p-2">
+                class="mt-4 text-xl opacity-20 hover:opacity-100 transition-opacity p-2">
                 🔒
             </button>
         </footer>
@@ -610,18 +250,7 @@
             </div>
         </div>
 
-        <script>
-            const visitorLabels = [
-                "Stalkers",
-                "Future Besties",
-                "Rubber Tree Fans",
-                "People Avoiding Work",
-                "Lost Souls",
-                "Curious Cats",
-                "Witnesses"
-            ];
-            document.getElementById('visitor-label').innerText = visitorLabels[Math.floor(Math.random() * visitorLabels.length)];
-        </script>
+
 
     </main>
 
@@ -692,156 +321,10 @@
 
 
 
-    <script>
-        const body = document.getElementById('body');
 
-        // --- Modal Logic ---
-        function openBioModal() {
-            document.getElementById('bioModal').classList.add('active');
-        }
-
-        function closeBioModal(e) {
-            // Check if triggered by event (overlay click) or direct call (button)
-            if (!e || e.target.id === 'bioModal') {
-                document.getElementById('bioModal').classList.remove('active');
-                // Also close dog if open
-                document.getElementById('dogPopup').classList.remove('active');
-            }
-            // If direct call (button)
-            if (!e) {
-                document.getElementById('bioModal').classList.remove('active');
-                document.getElementById('dogPopup').classList.remove('active');
-            }
-        }
-
-        function openGuestbookModal() {
-            document.getElementById('guestbookModal').classList.add('active');
-            document.getElementById('guestbookFeedback').classList.add('hidden');
-            document.getElementById('guestbookMessage').value = '';
-        }
-
-        function closeGuestbookModal(e) {
-            if (!e || e.target.id === 'guestbookModal') {
-                document.getElementById('guestbookModal').classList.remove('active');
-            }
-            if (!e) {
-                document.getElementById('guestbookModal').classList.remove('active');
-            }
-        }
-
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.add('active');
-            document.getElementById('adminPassword').value = '';
-        }
-
-        function closeAdminModal(e) {
-            if (!e || e.target.id === 'adminModal') {
-                document.getElementById('adminModal').classList.remove('active');
-            }
-            if (!e) {
-                document.getElementById('adminModal').classList.remove('active');
-            }
-        }
-
-        function submitAdmin(e) {
-            e.preventDefault();
-            const password = document.getElementById('adminPassword').value;
-            if (password) {
-                window.location.href = '/admin/guestbook?secret=' + encodeURIComponent(password);
-            }
-        }
-
-        async function submitGuestbook(e) {
-            e.preventDefault();
-            const messageInput = document.getElementById('guestbookMessage');
-            const submitBtn = document.getElementById('guestbookSubmit');
-            const feedback = document.getElementById('guestbookFeedback');
-            const message = messageInput.value.trim();
-
-            if (!message) return;
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Leaving Trace...';
-
-            try {
-                const response = await fetch('/api/guestbook', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message: message })
-                });
-
-                if (response.ok) {
-                    feedback.innerText = "Trace left successfully! Refreshing...";
-                    feedback.classList.remove('hidden', 'text-red-500');
-                    feedback.classList.add('text-green-500');
-
-                    // Reload page after a short delay to see the updated marquee
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                } else {
-                    throw new Error('Failed to save message');
-                }
-            } catch (error) {
-                console.error(error);
-                feedback.innerText = "Oops, something went wrong. Try again later.";
-                feedback.classList.remove('hidden', 'text-green-500');
-                feedback.classList.add('text-red-500');
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Leave It';
-            }
-        }
-
-        function toggleDog(e) {
-            e.stopPropagation();
-            const dogPopup = document.getElementById('dogPopup');
-            dogPopup.classList.toggle('active');
-        }
-
-        function toggleTheme() {
-            body.classList.toggle('dark');
-
-            // Invert colors manually if needed for specific elements, 
-            // but Tailwind 'dark' class applied to body handles most via styling variables
-            if (body.classList.contains('dark')) {
-                body.classList.remove('bg-gold', 'text-black');
-                body.classList.add('bg-black', 'text-gold');
-            } else {
-                body.classList.remove('bg-black', 'text-gold');
-                body.classList.add('bg-gold', 'text-black');
-            }
-        }
-
-        function toggleSection(id) {
-            const section = document.getElementById(id);
-            const allSections = document.querySelectorAll('.content-panel');
-
-            // Close others
-            allSections.forEach(s => {
-                if (s.id !== id) s.classList.remove('open');
-            });
-
-            // Toggle current
-            section.classList.toggle('open');
-
-            // Optional: Scroll to section if opening
-            if (section.classList.contains('open')) {
-                setTimeout(() => {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 300);
-            }
-        }
-
-
-
-        function toggleInstaLazy() {
-            const msg = document.getElementById('insta-msg');
-            msg.classList.toggle('hidden');
-        }
-    </script>
     <script src="/js/antigravity.js"></script>
+    <script src="/js/destroy.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 
 </html>
